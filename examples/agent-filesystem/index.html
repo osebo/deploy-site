@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>A cloud filesystem for agents</title>
+<meta name="description" content="A plan for building a cloud filesystem agents can read and write, with a designed human window onto it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfaf8;
+    --ink:#1b1a18;
+    --soft:#8a877f;
+    --hair:#e7e4dd;
+    --blue:#1a6dff;
+    --green:#1f9d63;
+    --serif:"Newsreader",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+  }
+  .container{max-width:640px; margin:0 auto; padding:0 28px}
+
+  header.intro{padding:104px 0 8px}
+  header.intro h1{
+    font-family:var(--serif); font-weight:500; font-size:2.6rem;
+    letter-spacing:-.01em; margin:0; line-height:1.06;
+  }
+  header.intro time{display:block; margin-top:10px; color:var(--soft); font-size:.9rem}
+
+  article p{margin:1.35em 0; color:#2a2925}
+  a.link{
+    color:var(--ink); text-decoration:none;
+    background-image:linear-gradient(var(--soft),var(--soft));
+    background-size:100% 1px; background-position:0 1.08em; background-repeat:no-repeat;
+    transition:color .18s ease, background-image .18s ease;
+  }
+  a.link:hover{ color:var(--blue); background-image:linear-gradient(var(--blue),var(--blue)); }
+
+  .callout{
+    margin:40px 0; padding:22px 24px; border:1px solid var(--hair);
+    border-radius:12px; background:#f6f5f1;
+  }
+  .callout p{margin:0; font-family:var(--serif); font-size:1.18rem; line-height:1.5; color:#2a2925}
+  .callout .label{
+    display:block; font-family:var(--sans); font-size:.74rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--soft); margin-bottom:10px;
+  }
+
+  section.list{margin-top:60px}
+  section.list > h3{
+    font-family:var(--sans); font-weight:500; font-size:.82rem;
+    text-transform:uppercase; letter-spacing:.12em; color:var(--soft); margin:0 0 6px;
+  }
+  .group{padding:24px 0; border-top:1px solid var(--hair)}
+  .row{display:flex; align-items:baseline; justify-content:space-between; gap:18px}
+  .row h2{
+    font-family:var(--serif); font-weight:500; font-size:1.5rem;
+    letter-spacing:-.01em; margin:0; line-height:1.2;
+  }
+  .status{
+    flex:none; font-size:.82rem; color:var(--soft);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  .lede{font-family:var(--serif); font-size:1.12rem; color:#3a3833; margin:.5rem 0 .9rem; font-style:italic}
+  ul.points{list-style:none; margin:0; padding:0; display:grid; gap:8px}
+  ul.points li{position:relative; padding-left:20px; color:#46443e; font-size:.97rem; line-height:1.5}
+  ul.points li::before{content:""; position:absolute; left:2px; top:.72em; width:5px; height:1px; background:var(--soft)}
+  ul.points li strong{font-weight:500; color:var(--ink)}
+
+  section.list .group:last-child{padding-bottom:96px}
+
+  @media (max-width:520px){
+    header.intro{padding-top:72px}
+    header.intro h1{font-size:2rem}
+    .row h2{font-size:1.3rem}
+    .row{flex-direction:column; gap:4px}
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="intro">
+      <h1>A cloud filesystem for agents</h1>
+      <time>Plan · Jun 2, 2026</time>
+    </header>
+
+    <article>
+      <p>Agents today are amnesiac. Every session starts from nothing, ends with nothing, and cannot hand its work to the next agent or to the same agent on another machine. A persistent cloud filesystem that agents can read and write closes that gap. It turns a stateless call into something with continuity.</p>
+      <p>There is a second gap underneath it. A drive that agents read and write is, today, invisible to people. There is no good way to see what an agent stored, browse it, trust it, or share it. That is a design problem, not an infrastructure problem, and it is the part worth building: a clear human window onto the agent filesystem.</p>
+      <p>The goal here is a polished, working prototype, scoped tightly. Single user, no billing, no abuse machinery. Depth of craft on a narrow slice over breadth.</p>
+    </article>
+
+    <div class="callout">
+      <span class="label">The north star</span>
+      <p>You hand an agent a task. It writes files into a cloud drive as it works. You watch them appear live: folders filling in, a report rendering, an image dropping in, each tagged with which agent wrote it and when. Then you click a folder and publish it to a public URL.</p>
+    </div>
+
+    <article>
+      <p>Everything is designed backward from that one minute. Realtime, provenance, and preview are the hero. Everything else is supporting cast.</p>
+    </article>
+
+    <section class="list">
+      <h3>Architecture</h3>
+
+      <div class="group">
+        <div class="row">
+          <h2>The drive</h2>
+          <span class="status">Backend</span>
+        </div>
+        <p class="lede">Rent the infrastructure, do not build it.</p>
+        <ul class="points">
+          <li><strong>Supabase</strong> as the minimal drive: Postgres for file metadata (path, agent, session, timestamps, type), Storage for the bytes, Realtime for live updates, Auth as a simple gate.</li>
+          <li>One service, near zero ops, and Realtime gives the live writing feel for free.</li>
+          <li>Alternative: ride an existing agent drive if its API is open. More on brand, less control over polish.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>The agent interface</h2>
+          <span class="status">MCP server</span>
+        </div>
+        <p class="lede">The part that makes it real, not a mockup.</p>
+        <ul class="points">
+          <li>A small TypeScript MCP server exposing fs_list, fs_read, fs_write, fs_delete, fs_publish.</li>
+          <li>Connect it to Claude Code or Claude Desktop so a real agent can read and write the drive.</li>
+          <li>Every write records who wrote it: which agent, which session.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>The window</h2>
+          <span class="status">Web app</span>
+        </div>
+        <p class="lede">Where most of the effort goes. This is the craft.</p>
+        <ul class="points">
+          <li>Next.js and React, subscribed to the drive's realtime feed.</li>
+          <li>Browse the tree, preview files, see an activity timeline of what changed and by whom.</li>
+          <li>Publish any folder as a public site. That last step is the existing weblink tool, so the whole arc closes on itself.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="list">
+      <h3>Phases</h3>
+
+      <div class="group">
+        <div class="row">
+          <h2>Define and design</h2>
+          <span class="status">Phase 0</span>
+        </div>
+        <p class="lede">Lock the demo and the signature idea.</p>
+        <ul class="points">
+          <li>Lock the demo narrative and design the key screens: drive browser, file preview, activity timeline, publish flow.</li>
+          <li>Pick the one novel thing to explore: agent provenance. How do you show that an agent, not a person, wrote this file, in which session? That is unclaimed design territory. Make it the signature.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Write path</h2>
+          <span class="status">Phase 1</span>
+        </div>
+        <p class="lede">Prove read and write, headless.</p>
+        <ul class="points">
+          <li>Supabase schema plus the MCP server.</li>
+          <li>Success: a real agent session writes a file and it lands in the drive with full metadata. No UI yet.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>The live window</h2>
+          <span class="status">Phase 2</span>
+        </div>
+        <p class="lede">The hero moment.</p>
+        <ul class="points">
+          <li>A read only browser of the drive with a realtime subscription.</li>
+          <li>Run an agent, watch files stream in. Get the motion and the feel right here.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Previews and provenance</h2>
+          <span class="status">Phase 3</span>
+        </div>
+        <p class="lede">Make it sing.</p>
+        <ul class="points">
+          <li>Great file viewers: markdown, syntax highlighted code, images, live HTML.</li>
+          <li>The activity timeline: who or what wrote what, and when. Empty states, motion, taste.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Publish a folder</h2>
+          <span class="status">Phase 4</span>
+        </div>
+        <p class="lede">Close the arc.</p>
+        <ul class="points">
+          <li>Wire fs_publish to weblink. A folder becomes a public URL.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="list">
+      <h3>First move</h3>
+      <div class="group">
+        <ul class="points">
+          <li>Spend ten minutes checking whether an existing agent drive exposes an open API. If it does, you may skip building any backend and point the window straight at it.</li>
+          <li>If it does not, Supabase is the minimal drive, and Phase 1 begins.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

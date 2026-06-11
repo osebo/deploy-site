@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>weblink</title>
+<meta name="description" content="Give any agent the power to deploy a website to a URL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfaf8;
+    --ink:#1b1a18;
+    --soft:#8a877f;
+    --hair:#e7e4dd;
+    --pink:#ff00aa;
+    --green:#1f9d63;
+    --blue:#1a6dff;
+    --serif:"Newsreader",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+  }
+  .container{max-width:640px; margin:0 auto; padding:0 28px}
+
+  /* --- header / bio --- */
+  header.intro{padding:104px 0 8px}
+  header.intro h1{
+    font-family:var(--serif); font-weight:500; font-size:2.6rem;
+    letter-spacing:-.01em; margin:0; line-height:1.05;
+  }
+  header.intro time{display:block; margin-top:10px; color:var(--soft); font-size:.9rem}
+
+  article p{margin:1.35em 0; color:#2a2925}
+  a.link{
+    color:var(--ink); text-decoration:none;
+    background-image:linear-gradient(var(--soft),var(--soft));
+    background-size:100% 1px; background-position:0 1.08em; background-repeat:no-repeat;
+    transition:color .18s ease, background-image .18s ease;
+  }
+  a.link:hover{
+    color:var(--blue);
+    background-image:linear-gradient(var(--blue),var(--blue));
+  }
+
+  /* --- roadmap list (à la "Writing") --- */
+  section.list{margin-top:64px}
+  section.list > h3{
+    font-family:var(--sans); font-weight:500; font-size:.82rem;
+    text-transform:uppercase; letter-spacing:.12em; color:var(--soft);
+    margin:0 0 6px;
+  }
+  .group{padding:22px 0; border-top:1px solid var(--hair)}
+  .row{display:flex; align-items:baseline; justify-content:space-between; gap:18px}
+  .row h2{
+    font-family:var(--serif); font-weight:500; font-size:1.5rem;
+    letter-spacing:-.01em; margin:0; line-height:1.2;
+  }
+  .status{
+    flex:none; font-size:.82rem; color:var(--soft);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+    position:relative;
+  }
+  .status.shipped{color:var(--green); font-weight:500}
+  .lede{font-family:var(--serif); font-size:1.12rem; color:#3a3833; margin:.5rem 0 .9rem; font-style:italic}
+  ul.points{list-style:none; margin:0; padding:0; display:grid; gap:7px}
+  ul.points li{
+    position:relative; padding-left:20px; color:#46443e; font-size:.97rem; line-height:1.5;
+  }
+  ul.points li::before{content:""; position:absolute; left:2px; top:.72em; width:5px; height:1px; background:var(--soft)}
+
+  /* --- steps (Using it) --- */
+  ol.steps{margin:0; padding:0; list-style:none; counter-reset:step; display:grid; gap:18px}
+  ol.steps li{position:relative; padding-left:40px; color:#3a3833; font-size:.99rem; line-height:1.55}
+  ol.steps li::before{
+    counter-increment:step; content:counter(step);
+    position:absolute; left:0; top:-1px; width:26px; height:26px;
+    border-radius:50%; border:1px solid var(--hair); display:grid; place-items:center;
+    font-family:var(--sans); font-size:.8rem; color:var(--soft);
+  }
+  ol.steps li strong{font-weight:500; color:var(--ink)}
+  .cmd{
+    display:block; margin-top:9px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.82rem;
+    background:#f1efe9; border:1px solid var(--hair); border-radius:8px;
+    padding:10px 12px; color:#2a2925; overflow-x:auto; white-space:pre-wrap; word-break:break-word;
+  }
+
+  section.list .group:last-child{padding-bottom:96px}
+
+  @media (max-width:520px){
+    header.intro{padding-top:72px}
+    header.intro h1{font-size:2.1rem}
+    .row h2{font-size:1.3rem}
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="intro">
+      <h1>weblink</h1>
+      <time>Updated Jun 2, 2026</time>
+    </header>
+
+    <article>
+      <p>A deploy primitive built for agents. You point at a folder of website code, say the word, and get back a live URL you can open anywhere. No dashboards, no tokens, no setup.</p>
+      <p>It started as a single <a class="link" href="https://docs.claude.com/en/docs/claude-code" target="_blank" rel="noopener noreferrer">Claude Code</a> skill wrapping the <a class="link" href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a> CLI. The bet is that the last mile of agent-written code, turning it into something shareable, is still built for humans clicking buttons. This closes that gap.</p>
+      <p>The path runs from a personal tool to a hosted product any agent can call. Below is how to use it today, and where it’s headed.</p>
+    </article>
+
+    <section class="list">
+      <h3>Using it</h3>
+      <div class="group">
+        <ol class="steps">
+          <li><strong>Install once.</strong> Grab the Vercel CLI and sign in.<span class="cmd">npm i -g vercel && vercel login</span></li>
+          <li><strong>Point Claude at your folder.</strong> In Claude Code, reference the website folder with <code>@</code> and ask to deploy.<span class="cmd">@my-site deploy this website</span></li>
+          <li><strong>Get a link.</strong> Claude hands back a live, public URL on <code>weblink.dev</code> you can open or share anywhere.<span class="cmd">Live at https://my-site-a1b2.weblink.dev</span></li>
+          <li><strong>Change it anytime.</strong> Edit the files and ask to update, and the same clean URL refreshes in place.<span class="cmd">“update the my-site page” → https://my-site.weblink.dev</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="list">
+      <h3>Roadmap</h3>
+
+      <div class="group">
+        <div class="row">
+          <h2>Personal skill</h2>
+          <span class="status shipped" id="shipped">Shipped</span>
+        </div>
+        <p class="lede">The proof that the gesture feels like magic.</p>
+        <ul class="points">
+          <li>A Claude Code skill wrapping the Vercel CLI: your account, throwaway public URLs.</li>
+          <li>Stages a clean copy of the folder, so your source is never touched.</li>
+          <li>Auto-disables Vercel’s login gate, so every link is genuinely public on the first try.</li>
+          <li>Static or framework apps, auto-detected.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Open source</h2>
+          <span class="status">Stage 1 · Next</span>
+        </div>
+        <p class="lede">Release it as a plugin: research disguised as a product.</p>
+        <ul class="points">
+          <li>Bring-your-own-Vercel: anyone installs it and plugs in their own account. Zero infra cost.</li>
+          <li>Distributed via the Claude Code plugin marketplace and GitHub.</li>
+          <li>Exposed as an MCP server, so it works from any agent, not just Claude Code.</li>
+          <li>Learn what people actually ask a deploy tool to do.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Hosted backend</h2>
+          <span class="status">Stage 2 · Later</span>
+        </div>
+        <p class="lede">The real product: you own the hosting.</p>
+        <ul class="points">
+          <li>The user just says “deploy” and gets a URL on your platform. No account, no token, no DNS.</li>
+          <li>Built on Cloudflare Workers / Pages + R2: cheap, edge-fast, DDoS-protected.</li>
+          <li>Static-first. Free tier (ephemeral) plus paid: persistence, custom domains, password protection.</li>
+          <li>Abuse handling, TTLs, and cost caps are the actual business, and the moat.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <div class="row">
+          <h2>Builds &amp; public API</h2>
+          <span class="status">Stage 3 · Later</span>
+        </div>
+        <p class="lede">The deploy API for the agent era.</p>
+        <ul class="points">
+          <li>Sandboxed framework builds: Next.js, Vite, and friends.</li>
+          <li>A public REST API so any app or agent can deploy programmatically.</li>
+          <li>Usage-based tier for other agent products to build on.</li>
+          <li>“Vercel for agents,” unbundled from any one builder.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
