@@ -1,9 +1,9 @@
 # House style for generated webpages
 
-Every webpage created for deployment with this skill MUST follow this design system.
-It is modeled on https://web-strategy.weblink.dev/ — a quiet, editorial, essay-like
-aesthetic: warm off-white paper, near-black ink, serif display type, hairline rules,
-and restrained monochrome accents. No loud colors, no heavy shadows, no gradients.
+Every webpage created for deployment with this skill MUST follow this design system —
+a quiet, editorial, essay-like aesthetic: warm off-white paper, near-black ink, serif
+display type, hairline rules, and restrained monochrome accents. No loud colors, no
+heavy shadows, no gradients.
 
 ## Core tokens
 
