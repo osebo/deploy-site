@@ -23,7 +23,7 @@ Claude: (runs deploy.sh → vercel deploy → captures URL)
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Skill definition + instructions Claude follows |
-| `STYLE.md` | House design system for generated pages (modeled on [web-strategy.weblink.dev](https://web-strategy.weblink.dev/)) |
+| `STYLE.md` | House design system for generated pages |
 | `deploy.sh` | The deploy script (stage → deploy → return URL) |
 
 ## Install
