@@ -10,7 +10,7 @@ Claude at a folder, say "deploy it," and get back a public URL.
 ```
 You:    @my-site deploy this website
 Claude: (runs deploy.sh → vercel deploy → captures URL)
-        ✅ Live at https://my-site-a1b2c3.vercel.app
+        Live at https://my-site-a1b2c3.vercel.app
 ```
 
 - **Hosting:** Vercel (your account; authenticated locally via `vercel login`).
